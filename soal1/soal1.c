@@ -6,7 +6,7 @@
 #include <wait.h>
 #include <string.h>
 #include<sys/stat.h>
-#include <time.h>
+
 int main(int argc, char *argv[]) {
     pid_t pid, sid;
     pid = fork();
@@ -75,9 +75,9 @@ int main(int argc, char *argv[]) {
         char *argv4[] = {"wget","--no-check-certificate","https://drive.google.com/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download","-O", "FOTO.zip","-a","log",NULL};
         execv("/usr/bin/wget",argv4);
         }
-        // unzip file (soal 1c)
+        
         while(wait(NULL) != child_id);
-
+        // unzip file (soal 1c)
         child_id = fork();
 
         if (child_id == 0) {
