@@ -28,11 +28,23 @@ int main(int argc, char *argv[]) {
     close(STDOUT_FILENO);
     // 6 jam sebelum Ulang Tahun
     // 1617960120
-    time_t t = time(NULL);
+    struct tm t;
+    time_t BeforeBirthday;
+
+    t.tm_year = 2021-1900;  // Year - 1900
+    t.tm_mon = 3;           // Month, where 0 = jan
+    t.tm_mday = 9;          // Day of the month
+    t.tm_hour = 16;
+    t.tm_min = 22;
+    t.tm_sec = 00;
+    t.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown
+    BeforeBirthday = mktime(&t);
+    
+    time_t currenttime = time(NULL);
         // soal 1e
-        while (t !=1617960120)
+        while (currenttime != BeforeBirthday)
         {
-          t = time(NULL);
+          currenttime = time(NULL);
         }
         
         pid_t child_id;
@@ -113,9 +125,19 @@ int main(int argc, char *argv[]) {
         // soal 1f
         // WAKTU ULANG TAHUN
         // 1617981720
-        while (t !=1617981720)
+        time_t Birthday;
+
+        t.tm_year = 2021-1900;  // Year - 1900
+        t.tm_mon = 3;           // Month, where 0 = jan
+        t.tm_mday = 9;          // Day of the month
+        t.tm_hour = 22;
+        t.tm_min = 22;
+        t.tm_sec = 00;
+        t.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown
+        Birthday = mktime(&t);
+        while (currenttime !=Birthday)
         {
-          t = time(NULL);
+          currenttime = time(NULL);
         }
         
             child_id = fork();
