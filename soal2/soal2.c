@@ -10,8 +10,9 @@
 #include <errno.h>
 
 int main(){
+    char pathdirectory[] = "/home/nop/sistemoperasi/modul2/soal-shift-sisop-modul-2-IT10-2021/soal2/petshop/";
     pid_t child_id;
-    if ((chdir("/home/kali/sistemoperasi/modul2/soalshift/soal2/petshop")) < 0) {
+    if ((chdir(pathdirectory)) < 0) {
         exit(EXIT_FAILURE);
     }
     child_id = fork();
@@ -33,7 +34,7 @@ int main(){
     struct dirent *ep;
     char f_name[1000];
     memset(f_name, 0, sizeof f_name);
-    dp = opendir("/home/kali/sistemoperasi/modul2/soalshift/soal2/petshop/");
+    dp = opendir(pathdirectory);
 
     if (dp != NULL)
     {
@@ -56,8 +57,8 @@ int main(){
         // puts(token);
         char location[256];
         struct stat location_stat;
-
-        sprintf(location, "/home/kali/sistemoperasi/modul2/soalshift/soal2/petshop/%s", token);
+        strcpy(location,pathdirectory);
+        strcat(location,token);
         
         stat(location, &location_stat);
 
@@ -183,7 +184,7 @@ int main(){
                             pFile = fopen(pathketerangan, "a+");
                                 char *inp = ""
                                 "nama: %s\n"
-                                "umur: %s\n\n";
+                                "umur: %s tahun\n\n";
                             fprintf(pFile, inp, nama[j],umur[j]);
                             fclose(pFile);
                         j = j+1;
@@ -219,7 +220,7 @@ int main(){
                     pFile = fopen(pathketerangan, "a+");
                         char *inp = ""
                         "nama: %s\n"
-                        "umur: %s\n\n";
+                        "umur: %s tahun\n\n";
                     fprintf(pFile, inp, nama[j],umur[j]);
                     fclose(pFile);
             }

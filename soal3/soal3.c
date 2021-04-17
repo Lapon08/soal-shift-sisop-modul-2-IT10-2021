@@ -8,11 +8,11 @@
 #include<sys/stat.h>
 int main(int argc, char *argv[]) {
       if (argc != 2) {
-    printf("ERROR! Argumen Salah\n");
+    printf("<USAGE>\n ./program -x \n ./program -z\n\n");
     return 1;
   }
   if (strcmp(argv[1], "-z") != 0 && strcmp(argv[1], "-x") != 0) {
-    printf("ERROR! Mode Salah\n");
+    printf("<USAGE>\n ./program -x \n ./program -z\n");
     return 1;
   }
     pid_t pid, sid;

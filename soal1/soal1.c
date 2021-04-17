@@ -37,10 +37,11 @@ int main(int argc, char *argv[]) {
         
         pid_t child_id;
         
-        // mkdir (soal 1a) 
-        if ((chdir("run")) < 0) {
+        // masuk folder demo
+        if ((chdir("demo")) < 0) {
         exit(EXIT_FAILURE);
         }
+        // mkdir (soal 1a) 
         child_id = fork();
 
         if (child_id == 0) {
@@ -50,33 +51,33 @@ int main(int argc, char *argv[]) {
         while(wait(NULL) != child_id);
         // download file (soal 1b)
         child_id = fork();
-        sleep(10);
+
         if (child_id == 0) {
             
-        char *argv2[] = {"wget", "-v","--no-check-certificate","https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download","-O", "MUSIK.zip","-a","log",NULL};
+        char *argv2[] = {"wget", "--no-check-certificate","https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download","-O", "MUSIK.zip","-a","log",NULL};
         execv("/usr/bin/wget",argv2);
         }
         while(wait(NULL) != child_id);
-        sleep(10);
+
         child_id = fork();
 
         if (child_id == 0) {
             
-        char *argv3[] = {"wget", "-v", "--no-check-certificate","https://drive.google.com/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download","-O","FILM.zip","-a","log",NULL};
+        char *argv3[] = {"wget", "--no-check-certificate","https://drive.google.com/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download","-O","FILM.zip","-a","log",NULL};
         execv("/usr/bin/wget",argv3);
         }
         while(wait(NULL) != child_id);
-        sleep(10);
+
         child_id = fork();
 
         if (child_id == 0) {
             
-        char *argv4[] = {"wget", "-v","--no-check-certificate","https://drive.google.com/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download","-O", "FOTO.zip","-a","log",NULL};
+        char *argv4[] = {"wget","--no-check-certificate","https://drive.google.com/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download","-O", "FOTO.zip","-a","log",NULL};
         execv("/usr/bin/wget",argv4);
         }
         // unzip file (soal 1c)
         while(wait(NULL) != child_id);
-        sleep(10);
+
         child_id = fork();
 
         if (child_id == 0) {
