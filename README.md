@@ -11,22 +11,159 @@ Pada suatu masa, hiduplah seorang Steven yang hidupnya pas-pasan. Steven punya p
 Di lain hal Steven anak yang tidak amat sangat super membenci matkul sisop, beberapa jam setelah diputus oleh pacarnya dia menemukan wanita lain bernama Stevany, namun Stevany berkebalikan dengan Steven karena menyukai sisop. Steven ingin terlihat jago matkul sisop demi menarik perhatian Stevany.
 
 Pada hari ulang tahun Stevany, Steven ingin memberikan Stevany zip berisikan hal-hal yang disukai Stevany. Steven ingin isi zipnya menjadi rapi dengan membuat folder masing-masing sesuai extensi.
-
+### Penyelesaian
 ## soal 1.a
 ### Deskripsi
 Dikarenakan Stevany sangat menyukai huruf Y, Steven ingin nama folder-foldernya adalah Musyik untuk mp3, Fylm untuk mp4, dan Pyoto untuk jpg
 ### Penyelesaian
+Untuk membuat program C yang berjalan di background, pertama harus melakukan #include terhadap library yang diperlukan
+```
+#include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
+#include <wait.h>
+#include <string.h>
+#include <sys/stat.h>
+```
+
+- ```<sys/types.h>``` library tipe data khusus (e.g. pid_t)
+- ```<stdio.h>``` library untuk fungsi input-output (e.g. printf(), sprintf())
+- ```<stdlib.h>``` library untuk fungsi umum (e.g. exit(), atoi())
+- ```<unistd.h> ```library untuk melakukan system call kepada kernel linux(e.g. fork())
+- ```<time.h>``` library untuk melakukan manipulasi date dan time (e.g. time(), strftime())
+- ```<wait.h>``` Library untuk melakukan wait (e.g. wait())
+- ```<sys/stat.h>``` Libaryr untuk melakukan umask untuk mengubah mode file
+
+Setelah itu, kami harus membuat program menjadi daemon.
+```
+    pid_t pid, sid;
+    pid = fork();
+
+    if (pid < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid > 0) {
+        exit(EXIT_SUCCESS);
+    }
+```
+Pertama, kami akan melakukan fork(). sehingga menghasilkan parent process dengan variable pid berisi PID dari child processnya dan child process dengan variable pid berisi nilai 0. Lalu parent process akan di keluarkan menggunakan fungsi exit() dengan exit statusnya.
+
+```
+    umask(0);
+    sid = setsid();
+    if (sid < 0) {
+        exit(EXIT_FAILURE);
+    }
+    close(STDIN_FILENO);
+    close(STDERR_FILENO);
+    close(STDOUT_FILENO);
+```
+Selanjutnya child process akan membuat session ID (sid) menggunakan fungsi setsid(). Lalu jika gagal, process tersebut akan dikeluarkan. Lalu process akan menutup file descriptor menggunakan fungsi close(). umask digunakan untuk mengatur permission dari suatu file pada saat file itu dibuat. Di sini kita mengatur nilai umask(0) agar kita mendapatkan akses full terhadap file yang dibuat oleh daemon. 
+
+Disini Kita tinggal menggunakan ```mkdir``` menmggunakan execv yaitu folder Musyik, Fylm, Pyoto.
+```
+        child_id = fork();
+        if (child_id == 0) {
+        char *argv[] = {"mkdir", "Musyik","Fylm","Pyoto",NULL};
+            execv("/bin/mkdir",argv);
+        }
+        while(wait(NULL) != child_id);
+```
 ## soal 1.b
 ### Deskripsi
 untuk musik Steven mendownloadnya dari link di bawah, film dari link di bawah lagi, dan foto dari link dibawah juga :).
 ### Penyelesaian
+Menggunakan fork() untuk menciptakan child baru. Child akan menjalankan execv(). Disini tinggal mendownload seluruh filenya menggunakan wget dengan beberapa parameter yaitu:
+
+```--no-check-certificate```
+
+```-O``` untuk outputya
+
+```-a``` untuk menyimpan lognya supaya mengetahui proses berhasil atau tidak
+
+```
+        child_id = fork();
+
+        if (child_id == 0) {
+            
+        char *argv2[] = {"wget", "--no-check-certificate","https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download","-O", "MUSIK.zip","-a","log",NULL};
+        execv("/usr/bin/wget",argv2);
+        }
+        while(wait(NULL) != child_id);
+
+        child_id = fork();
+
+        if (child_id == 0) {
+            
+        char *argv3[] = {"wget", "--no-check-certificate","https://drive.google.com/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download","-O","FILM.zip","-a","log",NULL};
+        execv("/usr/bin/wget",argv3);
+        }
+        while(wait(NULL) != child_id);
+
+        child_id = fork();
+
+        if (child_id == 0) {
+            
+        char *argv4[] = {"wget","--no-check-certificate","https://drive.google.com/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download","-O", "FOTO.zip","-a","log",NULL};
+        execv("/usr/bin/wget",argv4);
+        }
+        
+        while(wait(NULL) != child_id);
+```
+```while(wait(NULL) != child_id);``` Script tersebut dimaksudkan untuk menunggu proses child selesai terlebih dahulu lalu melanjutkan ke proses selanjutnya.
+
 ## soal 1.c
 ### Deskripsi
 Steven tidak ingin isi folder yang dibuatnya berisikan zip, sehingga perlu meng-extract-nya setelah didownload serta
+### Penyelesaian
+Menggunakan fork() untuk menciptakan child baru. Child akan menjalankan execv(). Tinggal menggunakan perintah ```unzip``` pada execv nya. lalu tanda ```*``` menandakan semua file zip yang berada di direktori tersebut di unzip
+
+```
+        child_id = fork();
+
+        if (child_id == 0) {
+            char *argv5[] = {"/bin/unzip","*",NULL};
+            execv("/bin/unzip",argv5);
+        }   
+        while(wait(NULL) != child_id); 
+```
+```while(wait(NULL) != child_id);``` Script tersebut dimaksudkan untuk menunggu proses child selesai terlebih dahulu lalu melanjutkan ke proses selanjutnya.
 ## soal 1.d
 ### Deskripsi
 memindahkannya ke dalam folder yang telah dibuat (hanya file yang dimasukkan)
 ### Penyelesaian
+Menggunakan fork() untuk menciptakan child baru. Child akan menjalankan execv(). Disini kami menggunakan ```find``` dikolaborasikan dengan mv. Find tersebut digunakan untuk mencari file apa saja yang terdapat pada direktori terkait. Ouput dari find akan dilakukan ```mv``` ke folder yang diinginkan. Untuk find menggunakan beberapa argumen yaitu
+- ```-type f``` Argumen tersebut digunakan untuk mencari file saja bukan direktori
+- ```-name *``` Arguman tersebut digunakan untuk 
+```
+        child_id = fork();
+
+        if (child_id == 0) {
+                char *argv8[] = {"find","FOTO","-type","f","-name","*","-exec","mv","-t","Pyoto/","{}","+",NULL};
+                execv("/bin/find",argv8);
+        }
+
+        while(wait(NULL) != child_id);
+        child_id = fork();
+
+        if (child_id == 0) {
+                char *argv9[] = {"find","MUSIK","-type","f","-name","*","-exec","mv","-t","Musyik/","{}","+",NULL};
+                execv("/bin/find",argv9);
+        }  
+        while(wait(NULL) != child_id);
+
+        child_id = fork();
+
+        if (child_id == 0) {
+                char *argv10[] = {"find","FILM","-type","f","-name","*","-exec","mv","-t","Fylm/","{}","+",NULL};
+                execv("/bin/find",argv10);
+        }
+        while(wait(NULL) != child_id);
+```
+
 ## soal 1.e
 ### Deskripsi
 Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany).
