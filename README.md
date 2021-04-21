@@ -179,20 +179,276 @@ Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang ber
 ### Deskripsi
 Pertama-tama program perlu mengextract zip yang diberikan ke dalam folder “/home/[user]/modul2/petshop”. Karena bos Loba teledor, dalam zip tersebut bisa berisi folder-folder yang tidak penting, maka program harus bisa membedakan file dan folder sehingga dapat memproses file yang seharusnya dikerjakan dan menghapus folder-folder yang tidak dibutuhkan.
 ### Penyelesaian
+Hal pertama yang harus dilakukan adalah melakukan #include terhadap library yang diperlukan
+```
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <wait.h>
+#include <dirent.h>
+#include <errno.h>
+```
+- ```<sys/types.h>``` library tipe data khusus (e.g. pid_t)
+- ```<sys/stat.h>``` Libary untuk melakukan umask untuk mengubah mode file
+- ```<stdio.h>``` library untuk fungsi input-output (e.g. printf(), sprintf())
+- ```<stdlib.h>``` library untuk fungsi umum (e.g. exit(), atoi())
+- ```<unistd.h> ```library untuk melakukan system call kepada kernel linux(e.g. fork())
+- ```<string.h> ```library untuk melakukan berbau hal dengan string seperti(strcpy(),strcat())
+- ```<wait.h>``` Library untuk melakukan wait (e.g. wait())
+- ```<dirent.h>``` Library untuk melakukan reading directory
+- ```<errno.h>``` Library untuk mendefinisikan variabel integer errno, yang diatur oleh panggilan sistem dan beberapa fungsi untuk menunjukkan apa yang salah.
+
+Setelah itu masuk ke direktori pethop dengan menggunakan ```chdir()```. Membuat proses baru child dengan menggunakan ```fork()```. Jika proses merupakan child maka lakukan ```execv``` ```unzip``` pada file pets.zip dengan parameter berikut:
+- ```-q``` untuk quiet mode
+
+Setelah itu membuat proses baru yang menjalankan ```execv``` command ```rm``` untuk menghapus file pets.zip
+```
+    char pathdirectory[] = "/home/nop/sistemoperasi/modul2/soal-shift-sisop-modul-2-IT10-2021/soal2/petshop/";
+    pid_t child_id;
+    if ((chdir(pathdirectory)) < 0) {
+        exit(EXIT_FAILURE);
+    }
+    child_id = fork();
+    // soal 2a
+    if (child_id == 0) {
+        char filename[50]="pets.zip";
+        char *argv[] = {"unzip","-q", filename, NULL};
+        execv("/bin/unzip", argv);
+    }
+    while(wait(NULL) != child_id);
+    child_id = fork();
+    if (child_id == 0) {
+        char *argv[] = {"rm", "pets.zip", NULL};
+        execv("/bin/rm", argv);
+    }
+    while(wait(NULL) != child_id);
+```
+Disini kami membuat list file apa saja yang ada pada direktori petshop. Pertama melakukanb ```opendir``` pada direktori ```petshop```. Setelah itu melakukan while untuk membaca nama file atau direktori yang ada. List tersebut dimasukkan ke f_name kecuali folder ```.``` dan ```..```.
+```
+    DIR *dp;
+    struct dirent *ep;
+    char f_name[1000];
+    memset(f_name, 0, sizeof f_name);
+    dp = opendir(pathdirectory);
+
+    if (dp != NULL)
+    {
+      while ((ep = readdir (dp))) {
+        if (strcmp(ep->d_name, ".") == 0 || strcmp(ep->d_name, "..") == 0) {
+            continue;
+        }
+         sprintf(f_name+strlen(f_name), "%s\n", ep->d_name);
+          
+      }
+      (void) closedir (dp);
+    } else perror ("Couldn't open the directory");
+
+    char *token = strtok(f_name, "\n");
+```
+Setelah itu kami menggunakan ```strtok()``` untuk melakukan split pada ```fname``` berdasarkan ```\n```. dan kami menyiapkan char double pointer untuk menyimpan nama file secara berurutan menggunakan while() sampai fname habis karena ```strtok()```. Dalam while tersebut juga melihat jika merupakan sebuah direktori maka akan membut proses child baru menggunakan ``fork()`` lalu melakukan ```rm``` pada direktori tersebut karena tidak diperlukan.
+```
+    char *token = strtok(f_name, "\n");
+    char **filenamepath = malloc(55*sizeof(char *));
+    char **filenamepathtemp = malloc(55*sizeof(char *));
+    
+    int num=0;
+    while (token != NULL) {
+        // puts(token);
+        char location[256];
+        struct stat location_stat;
+        strcpy(location,pathdirectory);
+        strcat(location,token);
+        
+        stat(location, &location_stat);
+
+        // direktori
+        
+        if (S_ISDIR(location_stat.st_mode)) {
+            child_id = fork();
+            if (child_id == 0) {
+                char *argv[] = {"rm","-r", token, NULL};
+                execv("/bin/rm", argv);
+            }
+        while(wait(NULL) != child_id);
+        
+        }else{
+            if (strstr (token,"_") != NULL)
+            {  
+                filenamepath[num] = token;  
+                filenamepathtemp[num]= token;
+                num++;
+                filenamepath[num] = token; 
+                filenamepathtemp[num]= token;  
+                num++;
+            }else{
+                filenamepath[num] = token; 
+                filenamepathtemp[num]= token;  
+                num++;
+                
+            }
+
+        }
+        token = strtok(NULL, "\n");
+     }
+```
+Kita melakukan while sampai mencapai jumlah file yang terlist di array sebelumnya. Disini kita membuat char ```kategori``` , ```nama``` , ```umur``` untuk menyimpan list hewan sesuai dengan nama file yang ada. Disini terdapat kasus dimana ada ```_``` pada nama file yang mengandung 2 hewan. Ketika bertemu nama file ```_``` maka akan dilakukan pengisian 2 array supaya jumlah array masih sama dengan char ```filenamepath```. Disini kita menggunakan ```strtok()``` untuk melakukan split supaya mendapatkan ```kategori```, ```nama```, ```umur```.
+```
+            char kategori[num][100];
+            char nama[num][100];
+            char umur[num][100];
+            int i=0;
+            int k =0;
+            while(i < num)
+            {
+                if (strstr (filenamepath[i],"_") != NULL)
+                {
+                    char temp[100];
+                    strcpy(temp,filenamepathtemp[i]);
+
+                    char *token2  = strtok(temp,";");
+                        while (token2 != NULL) {
+
+                            strcpy(kategori[i],token2);
+                            token2 = strtok(NULL,";");                            
+
+                            strcpy(nama[i],token2);
+                            token2 = strtok(NULL,"_");
+
+                            strcpy(umur[i],token2);
+                            i = i+1;
+                            token2 = strtok(NULL,";");
+
+                            strcpy(kategori[i],token2);
+                            token2 = strtok(NULL,";");
+
+                            strcpy(nama[i],token2);
+                            token2 = strtok(NULL,";");
+
+                            strncpy(umur[i],token2,strlen(token2)-4);
+                            
+                            token2 = NULL;
+                            
+                        }
+                }else{
+                    char temp[100];
+                    strcpy(temp,filenamepathtemp[i]);
+                    char *token2  = strtok(temp,";");
+                        while (token2 != NULL) {
+
+                            strcpy(kategori[i],token2);
+                            token2 = strtok(NULL,";");
+
+                            strcpy(nama[i],token2);
+                            token2 = strtok(NULL,";");
+
+                            strncpy(umur[i],token2,strlen(token2)-4);
+                            
+                            token2 = NULL;
+                            
+                        } 
+                }
+                i = i+1;
+            }
+```
 ## soal 2.b
 ### Deskripsi
 Foto peliharaan perlu dikategorikan sesuai jenis peliharaan, maka kamu harus membuat folder untuk setiap jenis peliharaan yang ada dalam zip. Karena kamu tidak mungkin memeriksa satu-persatu, maka program harus membuatkan folder-folder yang dibutuhkan sesuai dengan isi zip.
 Contoh: Jenis peliharaan kucing akan disimpan dalam “/petshop/cat”, jenis peliharaan kura-kura akan disimpan dalam “/petshop/turtle”.
 ### Penyelesaian
+Disini kami melakukan for looping dengan batas jumlah file yang ada yang diwakili ```num```. Disini kita melakukan ```opendir``` . ketika direktori belum ada maka akan dilakukan pembuatan proses dari dengan ```fork()``` dan melakukan ```execv``` dengan command ```mkdir```.
+```
+            for (int j = 0; j < num; j++)
+            {
+
+                    char direktori[100];
+                    strcpy(direktori,kategori[j]); 
+                    DIR* dir = opendir(direktori);
+                    if (dir) {
+                        closedir(dir);
+                    } else if (ENOENT == errno) {
+                        child_id = fork();
+                        if (child_id == 0) {
+                            char *argv[] = {"mkdir", direktori, NULL};
+                            execv("/bin/mkdir", argv);
+                        }
+                        while(wait(NULL) != child_id);
+                    }
+                    ...
+            }
+            
+    return 0;
+}
+```
 ## soal 2.c
 ### Deskripsi
 Setelah folder kategori berhasil dibuat, programmu akan memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan.
 Contoh: “/petshop/cat/joni.jpg”. 
 ### Penyelesaian
+Disini akan melakukan command mv dari ```filenamepath``` ke ```path``` yang merupaka. nama hewan dan dimasukkan ke folder susuai kategorinya. Untuk kasus file yang ada ``_`` pertama akan dilakukan ```cp``` untuk hewan pertama dan akan dilakukan ```mv``` pada hewan kedua.
+
+```
+            for (int j = 0; j < num; j++)
+            {
+                    ...
+                    if (dir) {
+                        ...
+                    } else if (ENOENT == errno) {
+                        child_id = fork();
+                        if (child_id == 0) {
+                            ...
+                        }
+                        ...
+                    }
+                    if (strstr (filenamepath[j],"_") != NULL){
+                        child_id = fork();
+                        if (child_id == 0) {
+                            char path[100];
+                            strcpy(path,direktori);
+                            strcat(path,"/");
+                            strcat(path,nama[j]);
+                            strcat(path,".jpg");
+                            char *argv[] = {"cp", filenamepath[j],path, NULL};
+                            execv("/bin/cp", argv);
+                        }
+                            ...
+                        child_id = fork();
+                        if (child_id == 0) {
+                            char path[100];
+                            strcpy(path,kategori[j]);
+                            strcat(path,"/");
+                            strcat(path,nama[j]);
+                            strcat(path,".jpg");
+                            char *argv[] = {"mv", filenamepath[j],path, NULL};
+                            execv("/bin/mv", argv);
+                        }
+                            while(wait(NULL) != child_id);
+                    }else{
+                        child_id = fork();
+                        if (child_id == 0) {
+                            char path[100];
+                            strcpy(path,direktori);
+                            strcat(path,"/");
+                            strcat(path,nama[j]);
+                            strcat(path,".jpg");
+                            char *argv[] = {"mv", filenamepath[j],path, NULL};
+                            execv("/bin/mv", argv);
+                        }
+                            while(wait(NULL) != child_id);
+                    }
+                    ...
+            }
+            
+    return 0;
+}
+```
 ## soal 2.d
 ### Deskripsi
 Karena dalam satu foto bisa terdapat lebih dari satu peliharaan maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama “dog;baro;1_cat;joni;2.jpg” dipindah ke folder “/petshop/cat/joni.jpg” dan “/petshop/dog/baro.jpg”.
 ### Penyelesaian
+Untuk penyelesaian ini bisa dilihat pada penyelesaian 2.c karena sudah dijelaskan disana juga.
 ## soal 2.e
 ### Deskripsi
 Di setiap folder buatlah sebuah file "keterangan.txt" yang berisi nama dan umur semua peliharaan dalam folder tersebut. Format harus sesuai contoh.
@@ -205,7 +461,67 @@ umur  : 2 tahun
 
 ```
 ### Penyelesaian
-
+Disini menggunakan ```FILE *pFile;``` untuk membuat filenya. Lalu menggunakan ```fprintf(pFile, inp, nama[j],umur[j]);``` untuk mengisi list nama hewannya. Disini terdapat kasus jika nama filenya mengandung ```_``` maka akan dilakukan penulisan keterangan hewan pertama lalu dilakukan increment. Setelah itu dilakukan penulisan keterangan hewan kedua.
+```
+            for (int j = 0; j < num; j++)
+            {
+                    char direktori[100];
+                    strcpy(direktori,kategori[j]); 
+                    DIR* dir = opendir(direktori);
+                    if (dir) {
+                        closedir(dir);
+                    } else if (ENOENT == errno) {
+                        child_id = fork();
+                        if (child_id == 0) {
+                            ...
+                        }
+                        ...
+                    }
+                    if (strstr (filenamepath[j],"_") != NULL){
+                        child_id = fork();
+                        if (child_id == 0) {
+                            ...
+                        }
+                            ...
+                            FILE *pFile;
+                            char pathketerangan[100];
+                            strcpy(pathketerangan,kategori[j]);
+                            strcat(pathketerangan,"/keterangan.txt");
+                            pFile = fopen(pathketerangan, "a+");
+                                char *inp = ""
+                                "nama: %s\n"
+                                "umur: %s tahun\n\n";
+                            fprintf(pFile, inp, nama[j],umur[j]);
+                            fclose(pFile);
+                        j = j+1;
+                        child_id = fork();
+                        if (child_id == 0) {
+                            ...
+                        }
+                            ...
+                    }else{
+                        child_id = fork();
+                        if (child_id == 0) {
+                            ...
+                        }
+                            ...
+                    }
+                    
+                    FILE *pFile;
+                    char pathketerangan[100];
+                    strcpy(pathketerangan,kategori[j]);
+                    strcat(pathketerangan,"/keterangan.txt");
+                    pFile = fopen(pathketerangan, "a+");
+                        char *inp = ""
+                        "nama: %s\n"
+                        "umur: %s tahun\n\n";
+                    fprintf(pFile, inp, nama[j],umur[j]);
+                    fclose(pFile);
+            }
+            
+    return 0;
+}
+```
 # Soal 3
 Source Code : [soal3.c](soal3/soal3.c)
 ### Deskripsi
