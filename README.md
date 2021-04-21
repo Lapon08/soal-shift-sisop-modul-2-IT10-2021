@@ -175,6 +175,29 @@ Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan n
 Tidak Ada
 
 ### Screenshot
+Ketika dijalankan tetapi waktu masih belum diatur ke 2021-04-09 16:22:00
+![](screenshot/soal1.png)
+
+sudo date --set="2021-04-09 16:22:00"
+
+![](screenshot/soal1_beforeBirthday.png)
+
+sudo date --set="2021-04-09 22:22:00"
+
+![](screenshot/soal1_birthday.png)
+
+Isi Folder Fylm
+
+![](screenshot/soal1_fylm.png)
+
+Isi Folder Musyik
+
+![](screenshot/soal1_Musyik.png)
+
+Isi Folder Pyoto
+
+![](screenshot/soal1_Pyoto.png)
+
 
 # Soal 2
 Source Code : [soal2.c](soal2/soal2.c)
@@ -531,7 +554,16 @@ Disini menggunakan ```FILE *pFile;``` untuk membuat filenya. Lalu menggunakan ``
 Tidak Ada
 
 ### Screenshot
+Sebelum Program dijalankan
+![](screenshot/soal2_before.png)
 
+Setelah program dijalankan
+
+![](screenshot/soal2_after.png)
+
+Contoh Isi dari keterangan.txt
+
+![](screenshot/soal2_keterangan.png)
 # Soal 3
 Source Code : [soal3.c](soal3/soal3.c)
 ### Deskripsi
@@ -730,3 +762,13 @@ Sedangkan apabila program utama dijalankan dengan argument -x maka file killer.s
 Tidak Ada
 
 ### Screenshot
+Menjalankan program dengan menambahkan argumen -z yang mengakibatkan seluruh proses langsung berhenti
+![](screenshot/soal3_-z.png)
+
+![](screenshot/soal3_-z_2.png)
+
+Menjalankan program dengan menambahkan argumen -x yang akan kill proses parent dan membiarkan child menjalankan proses sampai selesai
+
+![](screenshot/soal3_-x.png)
+
+![](screenshot/soal3_-x_2.png)
