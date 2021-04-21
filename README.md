@@ -217,7 +217,6 @@ Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah
 ### Penyelesaian
 Membuat loop utama ```while(1)```, yang akan terus berulang setiap 40 detik dengan blocking menggunakan fungsi ```sleep()```. Pada saat looping, yang pertama adalah mendapatkan timestamp localtime, yang akan disimpan pada variabel currentTime dengan format [YYYY-mm-dd_HH:ii:ss] dengan menggunakan fungsi ```strftime()```. 
 Menggunakan ```fork()``` untuk menciptakan child baru. Child akan menjalankan ```execv()```. Kemudian membuat direktori dengan perintah ```mkdir``` dengan nama sesuai currentTime.
-
 ```
 while(1){
         time_t t = time(NULL);
@@ -244,15 +243,132 @@ while(1){
 ### Deskripsi
 Setiap direktori yang sudah dibuat diisi dengan 10 gambar yang didownload dari https://picsum.photos/, dimana setiap gambar akan didownload setiap 5 detik. Setiap gambar yang didownload akan diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss] dan gambar tersebut berbentuk persegi dengan ukuran (n%1000) + 50 pixel dimana n adalah detik Epoch Unix.
 ### Penyelesaian
+Menggunakan ```fork()``` untuk menciptakan child baru. Child akan menjalankan ```execv()``` dan menggunakan perintah wget untuk mendownload gambar. Dan dilakukan looping sebanyak 10 kali menggunakan for loop, yang pertama dilakukan adalah mendapatkan timestamp untuk memberi nama file yang didownload, kemudian menentukan file path untuk menyimpan file yang didownload, yaitu pada folder yang sudah dibuat dengan nama folder currentTime (soal 3a) menggunakan fungsi ```sprintf()```. Untuk menentukan ukuran gambar yaitu dengan menambahkan ukuran yang ditentukan di akhir url. Kemudian gambar akan didownload menggunakan perintah ```wget``` dengan parameter
+```-o``` untuk outputnya
+```-a``` untuk menyimpan lognya supaya mengetahui proses berhasil atau tidak
+Dan akan berulang setiap 5 detik dengan menggunakan fungsi ```sleep()```.
+```
+child_id = fork();
+        if (child_id == 0) {
+            for (int i = 0; i < 10; i++) {
+                child_id = fork();
+                if (child_id == 0) {
+                    t = time(NULL);
+                    tm = localtime(&t);
+                    char new_currentTime[80], FilePath[160], link[80];
+                    strftime(new_currentTime, 80, "%Y-%m-%d_%H:%M:%S", tm);
+                    sprintf(FilePath, "%s/%s", currentTime, new_currentTime);
+                    sprintf(link, "https://picsum.photos/%ld", ((t%1000)+50));
+                    char *argv[] = {"wget","-O", FilePath, link,"-a","log", NULL};
+                    execv("/usr/bin/wget", argv);
+                }
+                sleep(5);
+            }
+            // soal 3c
+}
+```
 ## soal 3.c
 ### Deskripsi
 Setelah direktori telah terisi dengan 10 gambar, program tersebut akan membuat sebuah file “status.txt”, dimana didalamnya berisi pesan “Download Success” yang terenkripsi dengan teknik Caesar Cipher dan dengan shift 5. Caesar Cipher adalah Teknik enkripsi sederhana yang dimana dapat melakukan enkripsi string sesuai dengan shift/key yang kita tentukan. Misal huruf “A” akan dienkripsi dengan shift 4 maka akan menjadi “E”. Karena Ranora orangnya perfeksionis dan rapi, dia ingin setelah file tersebut dibuat, direktori akan di zip dan direktori akan didelete, sehingga menyisakan hanya file zip saja.
 ### Penyelesaian
+Setelah selesai mendownload sebanyak 10 gambar, kemudian membuat message “Download Succes” dan dienkripsi menggunakan Caesar chipper dengan shift/key 5.
+```
+while(wait(NULL) >0);
+            child_id = fork();
+            if (child_id == 0) {
+                char message[100]="Download Success", ch;
+                int i, key=5;
+                // encrypt message
+                for(i = 0; message[i] != '\0'; ++i){
+                    ch = message[i];
+                    
+                    if(ch >= 'a' && ch <= 'z'){
+                        ch = ch + key;
+                        
+                        if(ch > 'z'){
+                            ch = ch - 'z' + 'a' - 1;
+                        }
+                        
+                        message[i] = ch;
+                    }
+                    else if(ch >= 'A' && ch <= 'Z'){
+                        ch = ch + key;
+                        
+                        if(ch > 'Z'){
+                            ch = ch - 'Z' + 'A' - 1;
+                        }
+                        
+                        message[i] = ch;
+                    }
+                }
+```
+Kemudian membuat file status.txt di dalam folder currentTime dan file status.txt diisi dengan message yang sudah dienkripsi menggunakan fungsi ```fopen()``` dengan mode ```a+ ```yang berarti reading dan appending.
+```
+	FILE *file;
+               
+ 	char name[100];
+                strcpy(name,currentTime);
+                strcat(name,"/status.txt");
+                file = fopen(name,"a+");
+                fprintf(file,"%s",message);
+                fclose(file);
+```
+Setelah file berhasil dibuat dan diisi message dilanjutkan dengan zip folder tersebut dengan menggunakan ```execv()``` dan perintah ```zip``` dengan parameter
+```-r``` untuk zip secara rekursif pada direktori
+```
+	char filezip[100];
+	strcpy(filezip,currentTime);
+	strcat(filezip,".zip");
+
+	char *argv[] = {"zip","-r", filezip, currentTime,NULL};
+	execv("/bin/zip", argv);
+```
+Setelah selesai di zip, selanjutnya adalah menghapus direktori menggunakan ```execv()``` dan perintah ```rm``` dengan parameter
+```-r``` untuk menghapus direktori sekaligus semua isi pada direktori
+```
+while(wait(NULL) != child_id);
+    char *argv[] = {"rm", "-r", currentTime,"log",NULL};
+    execv("/bin/rm", argv);
+```
 ## soal 3.d
 ### Deskripsi
 Untuk mempermudah pengendalian program, pembimbing magang Ranora ingin program tersebut akan men-generate sebuah program “Killer” yang executable, dimana program tersebut akan menterminasi semua proses program yang sedang berjalan dan akan menghapus dirinya sendiri setelah program dijalankan. Karena Ranora menyukai sesuatu hal yang baru, maka Ranora memiliki ide untuk program “Killer” yang dibuat nantinya harus merupakan program bash.
 ### Penyelesaian
+Membuat file kosong killer.sh untuk menghentikan proses dengan mode ```w``` write
+```
+FILE *fileKiller;
+        fileKiller = fopen("killer.sh", "w");
+	.
+	//soal 3e
+	.
+fclose(fileKiller);
+    pid = fork();
+  if (pid == 0) {
+    char *argv[] = {"chmod","+x","killer.sh", NULL};
+    execv("/bin/chmod", argv);
+```
+Menggunakan ```fork()``` untuk menciptakan parent process. Menggunakan ```execv()``` dan perintah ```chmod``` dengan parameter ```+x``` untuk menambah permission file agar executable
 ## soal 3.e
 ### Deskripsi
 Pembimbing magang Ranora juga ingin nantinya program utama yang dibuat Ranora dapat dijalankan di dalam dua mode. Untuk mengaktifkan mode pertama, program harus dijalankan dengan argumen -z, dan Ketika dijalankan dalam mode pertama, program utama akan langsung menghentikan semua operasinya Ketika program Killer dijalankan. Sedangkan untuk mengaktifkan mode kedua, program harus dijalankan dengan argumen -x, dan Ketika dijalankan dalam mode kedua, program utama akan berhenti namun membiarkan proses di setiap direktori yang masih berjalan hingga selesai (Direktori yang sudah dibuat akan mendownload gambar sampai selesai dan membuat file txt, lalu zip dan delete direktori).
 ### Penyelesaian
+Menginput program bash pada file killer.sh. Apabila program utama dijalankan dengan argument -z maka file killer.sh, menggunakan fungsi ```fprintf()```, diisi dengan perintah ```pkill -9 -s sid``` untuk menghentikan paksa program yang berjalan dan kemudian menghapus file killer.sh tersebut.
+```
+if (strcmp(argv[1], "-z") == 0) {
+    char *contents = ""
+    "#!/bin/bash\n"
+    "/usr/bin/pkill -9 -s \"%d\"\n"
+    "/bin/rm killer.sh";
+    fprintf(fileKiller, contents, sid);
+  }
+ ```
+Sedangkan apabila program utama dijalankan dengan argument -x maka file killer.sh diisi dengan ```kill -9 getpid()``` untuk menghentikan program yang berjalan tetapi masih membiarkan proses yang terjadi di direktori hingga selesai.
+```
+  if (strcmp(argv[1], "-x") == 0) {
+    char *contents = ""
+    "#!/bin/bash\n"
+    "/usr/bin/kill -9 \"%d\"\n"
+    "/bin/rm killer.sh";
+    fprintf(fileKiller, contents, getpid());
+  }
+```
