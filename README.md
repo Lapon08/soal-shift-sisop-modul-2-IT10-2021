@@ -243,8 +243,10 @@ while(1){
 ### Deskripsi
 Setiap direktori yang sudah dibuat diisi dengan 10 gambar yang didownload dari https://picsum.photos/, dimana setiap gambar akan didownload setiap 5 detik. Setiap gambar yang didownload akan diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss] dan gambar tersebut berbentuk persegi dengan ukuran (n%1000) + 50 pixel dimana n adalah detik Epoch Unix.
 ### Penyelesaian
-Menggunakan ```fork()``` untuk menciptakan child baru. Child akan menjalankan ```execv()``` dan menggunakan perintah wget untuk mendownload gambar. Dan dilakukan looping sebanyak 10 kali menggunakan for loop, yang pertama dilakukan adalah mendapatkan timestamp untuk memberi nama file yang didownload, kemudian menentukan file path untuk menyimpan file yang didownload, yaitu pada folder yang sudah dibuat dengan nama folder currentTime (soal 3a) menggunakan fungsi ```sprintf()```. Untuk menentukan ukuran gambar yaitu dengan menambahkan ukuran yang ditentukan di akhir url. Kemudian gambar akan didownload menggunakan perintah ```wget``` dengan parameter
+Menggunakan ```fork()``` untuk menciptakan child baru. Child akan menjalankan ```execv()``` dan menggunakan perintah wget untuk mendownload gambar. Dan dilakukan looping sebanyak 10 kali menggunakan for loop, yang pertama dilakukan adalah mendapatkan timestamp untuk memberi nama file yang didownload, kemudian menentukan file path untuk menyimpan file yang didownload, yaitu pada folder yang sudah dibuat dengan nama folder currentTime (soal 3a) menggunakan fungsi ```sprintf()```. Untuk menentukan ukuran gambar yaitu dengan menambahkan ukuran yang ditentukan di akhir url. Kemudian gambar akan didownload menggunakan perintah ```wget``` dengan parameter:
+
 ```-o``` untuk outputnya
+
 ```-a``` untuk menyimpan lognya supaya mengetahui proses berhasil atau tidak
 Dan akan berulang setiap 5 detik dengan menggunakan fungsi ```sleep()```.
 ```
@@ -314,6 +316,7 @@ Kemudian membuat file status.txt di dalam folder currentTime dan file status.txt
                 fclose(file);
 ```
 Setelah file berhasil dibuat dan diisi message dilanjutkan dengan zip folder tersebut dengan menggunakan ```execv()``` dan perintah ```zip``` dengan parameter
+
 ```-r``` untuk zip secara rekursif pada direktori
 ```
 	char filezip[100];
@@ -324,6 +327,7 @@ Setelah file berhasil dibuat dan diisi message dilanjutkan dengan zip folder ter
 	execv("/bin/zip", argv);
 ```
 Setelah selesai di zip, selanjutnya adalah menghapus direktori menggunakan ```execv()``` dan perintah ```rm``` dengan parameter
+
 ```-r``` untuk menghapus direktori sekaligus semua isi pada direktori
 ```
 while(wait(NULL) != child_id);
