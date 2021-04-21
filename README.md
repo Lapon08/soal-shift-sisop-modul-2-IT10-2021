@@ -253,22 +253,22 @@ Menggunakan ```fork()``` untuk menciptakan child baru. Child akan menjalankan ``
 Dan akan berulang setiap 5 detik dengan menggunakan fungsi ```sleep()```.
 ```
 child_id = fork();
-        if (child_id == 0) {
-            for (int i = 0; i < 10; i++) {
-                child_id = fork();
-                if (child_id == 0) {
-                    t = time(NULL);
-                    tm = localtime(&t);
-                    char new_currentTime[80], FilePath[160], link[80];
-                    strftime(new_currentTime, 80, "%Y-%m-%d_%H:%M:%S", tm);
-                    sprintf(FilePath, "%s/%s", currentTime, new_currentTime);
-                    sprintf(link, "https://picsum.photos/%ld", ((t%1000)+50));
-                    char *argv[] = {"wget","-O", FilePath, link,"-a","log", NULL};
-                    execv("/usr/bin/wget", argv);
-                }
-                sleep(5);
-            }
-            // soal 3c
+if (child_id == 0) {
+    for (int i = 0; i < 10; i++) {
+	child_id = fork();
+	if (child_id == 0) {
+	    t = time(NULL);
+	    tm = localtime(&t);
+	    char new_currentTime[80], FilePath[160], link[80];
+	    strftime(new_currentTime, 80, "%Y-%m-%d_%H:%M:%S", tm);
+	    sprintf(FilePath, "%s/%s", currentTime, new_currentTime);
+	    sprintf(link, "https://picsum.photos/%ld", ((t%1000)+50));
+	    char *argv[] = {"wget","-O", FilePath, link,"-a","log", NULL};
+	    execv("/usr/bin/wget", argv);
+	}
+	sleep(5);
+    }
+    // soal 3c
 }
 ```
 ## soal 3.c
@@ -278,33 +278,33 @@ Setelah direktori telah terisi dengan 10 gambar, program tersebut akan membuat s
 Setelah selesai mendownload sebanyak 10 gambar, kemudian membuat message “Download Succes” dan dienkripsi menggunakan Caesar chipper dengan shift/key 5.
 ```
 while(wait(NULL) >0);
-            child_id = fork();
-            if (child_id == 0) {
-                char message[100]="Download Success", ch;
-                int i, key=5;
-                // encrypt message
-                for(i = 0; message[i] != '\0'; ++i){
-                    ch = message[i];
-                    
-                    if(ch >= 'a' && ch <= 'z'){
-                        ch = ch + key;
-                        
-                        if(ch > 'z'){
-                            ch = ch - 'z' + 'a' - 1;
-                        }
-                        
-                        message[i] = ch;
-                    }
-                    else if(ch >= 'A' && ch <= 'Z'){
-                        ch = ch + key;
-                        
-                        if(ch > 'Z'){
-                            ch = ch - 'Z' + 'A' - 1;
-                        }
-                        
-                        message[i] = ch;
-                    }
-                }
+child_id = fork();
+if (child_id == 0) {
+char message[100]="Download Success", ch;
+int i, key=5;
+// encrypt message
+for(i = 0; message[i] != '\0'; ++i){
+    ch = message[i];
+
+    if(ch >= 'a' && ch <= 'z'){
+	ch = ch + key;
+
+	if(ch > 'z'){
+	    ch = ch - 'z' + 'a' - 1;
+	}
+
+	message[i] = ch;
+    }
+    else if(ch >= 'A' && ch <= 'Z'){
+	ch = ch + key;
+
+	if(ch > 'Z'){
+	    ch = ch - 'Z' + 'A' - 1;
+	}
+
+	message[i] = ch;
+    }
+}
 ```
 Kemudian membuat file status.txt di dalam folder currentTime dan file status.txt diisi dengan message yang sudah dienkripsi menggunakan fungsi ```fopen()``` dengan mode ```a+ ```yang berarti reading dan appending.
 ```
