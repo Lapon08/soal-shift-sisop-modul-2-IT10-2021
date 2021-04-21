@@ -171,6 +171,11 @@ Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebe
 ### Deskripsi
 Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
 ### Penyelesaian
+### Kendala
+Tidak Ada
+
+### Screenshot
+
 # Soal 2
 Source Code : [soal2.c](soal2/soal2.c)
 ### Deskripsi
@@ -522,6 +527,11 @@ Disini menggunakan ```FILE *pFile;``` untuk membuat filenya. Lalu menggunakan ``
     return 0;
 }
 ```
+### Kendala
+Tidak Ada
+
+### Screenshot
+
 # Soal 3
 Source Code : [soal3.c](soal3/soal3.c)
 ### Deskripsi
@@ -531,6 +541,28 @@ Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang
 ### Deskripsi
 Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
 ### Penyelesaian
+
+
+Pertama melakukan ```#include``` header library yang diperlukan
+- ```<sys/types.h>``` library tipe data khusus (e.g. pid_t)
+- ```<sys/stat.h>``` Libary untuk melakukan umask untuk mengubah mode file
+- ```<stdio.h>``` library untuk fungsi input-output (e.g. printf(), sprintf())
+- ```<stdlib.h>``` library untuk fungsi umum (e.g. exit(), atoi())
+- ```<unistd.h> ```library untuk melakukan system call kepada kernel linux(e.g. fork())
+- ```<string.h> ```library untuk melakukan berbau hal dengan string seperti(strcpy(),strcat())
+- ```<wait.h>``` Library untuk melakukan wait (e.g. wait())
+- ```<time.h>``` library untuk melakukan manipulasi date dan time (e.g. time(), strftime())
+
+```
+#include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
+#include <wait.h>
+#include <string.h>
+#include <sys/stat.h>
+```
 Membuat loop utama ```while(1)```, yang akan terus berulang setiap 40 detik dengan blocking menggunakan fungsi ```sleep()```. Pada saat looping, yang pertama adalah mendapatkan timestamp localtime, yang akan disimpan pada variabel currentTime dengan format [YYYY-mm-dd_HH:ii:ss] dengan menggunakan fungsi ```strftime()```. 
 
 Menggunakan ```fork()``` untuk menciptakan child baru. Child akan menjalankan ```execv()```. Kemudian membuat direktori dengan perintah ```mkdir``` dengan nama sesuai currentTime.
@@ -694,3 +726,7 @@ Sedangkan apabila program utama dijalankan dengan argument -x maka file killer.s
     fprintf(fileKiller, contents, getpid());
   }
 ```
+### Kendala
+Tidak Ada
+
+### Screenshot
