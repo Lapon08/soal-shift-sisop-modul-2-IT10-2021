@@ -215,6 +215,31 @@ Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang
 ### Deskripsi
 Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
 ### Penyelesaian
+Membuat loop utama ```while(1)```, yang akan terus berulang setiap 40 detik dengan blocking menggunakan fungsi ```sleep()```. Pada saat looping, yang pertama adalah mendapatkan timestamp localtime, yang akan disimpan pada variabel currentTime dengan format [YYYY-mm-dd_HH:ii:ss] dengan menggunakan fungsi ```strftime()```. 
+Menggunakan ```fork()``` untuk menciptakan child baru. Child akan menjalankan ```execv()```. Kemudian membuat direktori dengan perintah ```mkdir``` dengan nama sesuai currentTime.
+
+```
+while(1){
+        time_t t = time(NULL);
+        struct tm *tm = localtime(&t);
+        char currentTime[80]; 
+        strftime(currentTime, sizeof(currentTime)-1, "%Y-%m-%d_%H:%M:%S", tm);
+
+        pid_t child_id;
+        child_id = fork();
+        // membuat direktori soal 3a
+        if (child_id == 0) {
+        char *argv[] = {"mkdir", currentTime, NULL};
+        execv("/bin/mkdir", argv); //membuat direktori dengan perintah mkdir dengan nama sesuai currenttime
+        }
+	//soal 3b
+	//soal 3c
+	.
+	.
+	.
+	Sleep(40);
+}
+```
 ## soal 3.b
 ### Deskripsi
 Setiap direktori yang sudah dibuat diisi dengan 10 gambar yang didownload dari https://picsum.photos/, dimana setiap gambar akan didownload setiap 5 detik. Setiap gambar yang didownload akan diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss] dan gambar tersebut berbentuk persegi dengan ukuran (n%1000) + 50 pixel dimana n adalah detik Epoch Unix.
