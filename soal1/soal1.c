@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
         child_id = fork();
 
         if (child_id == 0) {
-        char *argv8[] = {"find","FOTO","-type","f","-name","*","-exec","mv","-t","Pyoto/","{}","+",NULL};
+        char *argv8[] = {"find","FOTO","-type","f","-name","*.jpg","-exec","mv","-t","Pyoto/","{}","+",NULL};
         execv("/bin/find",argv8);
         }
 
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
             child_id = fork();
 
         if (child_id == 0) {
-        char *argv9[] = {"find","MUSIK","-type","f","-name","*","-exec","mv","-t","Musyik/","{}","+",NULL};
+        char *argv9[] = {"find","MUSIK","-type","f","-name","*.mp3","-exec","mv","-t","Musyik/","{}","+",NULL};
         execv("/bin/find",argv9);
         }  
         while(wait(NULL) != child_id);
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
             child_id = fork();
 
         if (child_id == 0) {
-        char *argv10[] = {"find","FILM","-type","f","-name","*","-exec","mv","-t","Fylm/","{}","+",NULL};
+        char *argv10[] = {"find","FILM","-type","f","-name","*.mp4","-exec","mv","-t","Fylm/","{}","+",NULL};
         execv("/bin/find",argv10);
         }
         while(wait(NULL) != child_id);
