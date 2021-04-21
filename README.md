@@ -216,6 +216,7 @@ Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang
 Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
 ### Penyelesaian
 Membuat loop utama ```while(1)```, yang akan terus berulang setiap 40 detik dengan blocking menggunakan fungsi ```sleep()```. Pada saat looping, yang pertama adalah mendapatkan timestamp localtime, yang akan disimpan pada variabel currentTime dengan format [YYYY-mm-dd_HH:ii:ss] dengan menggunakan fungsi ```strftime()```. 
+
 Menggunakan ```fork()``` untuk menciptakan child baru. Child akan menjalankan ```execv()```. Kemudian membuat direktori dengan perintah ```mkdir``` dengan nama sesuai currentTime.
 ```
 while(1){
@@ -248,6 +249,7 @@ Menggunakan ```fork()``` untuk menciptakan child baru. Child akan menjalankan ``
 ```-o``` untuk outputnya
 
 ```-a``` untuk menyimpan lognya supaya mengetahui proses berhasil atau tidak
+
 Dan akan berulang setiap 5 detik dengan menggunakan fungsi ```sleep()```.
 ```
 child_id = fork();
