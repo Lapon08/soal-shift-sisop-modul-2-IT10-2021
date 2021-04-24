@@ -167,10 +167,14 @@ Menggunakan fork() untuk menciptakan child baru. Child akan menjalankan execv().
 ## soal 1.e
 ### Deskripsi
 Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany).
+### Penyelesaian
+Dalam permasalahan ini, kita diminta untuk membuat daemon yang akan berjalan otomatis di background. Untuk menjalankan step a,b,c,d secara otomatis saat 6 jam sebelum ultah stevany, maka digunakan lah struct tm dari time.h untuk mengetahui waktu sistem. Sisanya tinggal dibandingkan dengan ultah stevany dengan memasukkannya ke dalam kondisi if.
 ## soal 1.f
 ### Deskripsi
 Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
 ### Penyelesaian
+Penggunaan '''fork''' dengan '''for''' untuk secara mudah menyesuaikan program '''exec''' yang dibutuhkan. '''prog3''' dan '''argv3[]''' untuk Zip dan '''prog4''' dan '''argv4[]''' untuk mendelete folder2.
+
 ### Kendala
 Tidak Ada
 
