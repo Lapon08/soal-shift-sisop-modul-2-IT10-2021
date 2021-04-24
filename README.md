@@ -169,11 +169,40 @@ Menggunakan fork() untuk menciptakan child baru. Child akan menjalankan execv().
 Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany).
 ### Penyelesaian
 Dalam permasalahan ini, kita diminta untuk membuat daemon yang akan berjalan otomatis di background. Untuk menjalankan step a,b,c,d secara otomatis saat 6 jam sebelum ultah stevany, maka digunakan lah struct tm dari time.h untuk mengetahui waktu sistem. Sisanya tinggal dibandingkan dengan ultah stevany dengan memasukkannya ke dalam kondisi if.
+```
+        t.tm_year = 2021-1900;  // Year - 1900
+        t.tm_mon = 3;           // Month, where 0 = jan
+        t.tm_mday = 9;          // Day of the month
+        t.tm_hour = 22;
+        t.tm_min = 22;
+        t.tm_sec = 00;
+        t.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown
+        Birthday = mktime(&t);
+        while (currenttime !=Birthday)
+        {
+          currenttime = time(NULL);
+        }
+```
 ## soal 1.f
 ### Deskripsi
 Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
 ### Penyelesaian
 Dalam Permasalahan ini, terdapat else if yang terakhir yaitu untuk menghapus folder dengan memanggil fungsi ```removeFoldersOnPath()``` caranya sama seperti fungsi ```moveFIlesRecursively()``` namun di remove mengecek jika folder FILM + FOTO + Musik kosong maka akan dihapus dengan menggunakan fungsi ```removeFolder()``` yang di dalamnya ada ada argumen ```rm -rf``` untuk remove secara rekursif dan diakhir execv untuk menghentikan proses jika selesai. kemudian memanggil fungsi ```zipFolder()``` untuk membuat Lopyu_Stevany.zip
+```
+            child_id = fork();
+
+        if (child_id == 0) {
+        char *argv10[] = {"/bin/zip","-rm","Lopyu_Stevany.zip","Musyik","Pyoto","Fylm",NULL};
+        execv("/bin/zip",argv10);
+        } 
+            while(wait(NULL) != child_id);
+            child_id = fork();
+
+        if (child_id == 0) {
+        char *argv10[] = {"/bin/rm","-r","FOTO","MUSIK","FILM","FOTO.zip","MUSIK.zip","FILM.zip","log",NULL};
+        execv("/bin/rm",argv10);
+        } 
+```
 ### Kendala
 Tidak Ada
 
