@@ -173,8 +173,7 @@ Dalam permasalahan ini, kita diminta untuk membuat daemon yang akan berjalan oto
 ### Deskripsi
 Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
 ### Penyelesaian
-Penggunaan '''fork''' dengan '''for''' untuk secara mudah menyesuaikan program '''exec''' yang dibutuhkan. '''prog3''' dan '''argv3[]''' untuk Zip dan '''prog4''' dan '''argv4[]''' untuk mendelete folder2.
-
+Dalam Permasalahan ini, terdapat else if yang terakhir yaitu untuk menghapus folder dengan memanggil fungsi ```removeFoldersOnPath()``` caranya sama seperti fungsi ```moveFIlesRecursively()``` namun di remove mengecek jika folder FILM + FOTO + Musik kosong maka akan dihapus dengan menggunakan fungsi ```removeFolder()``` yang di dalamnya ada ada argumen ```rm -rf``` untuk remove secara rekursif dan diakhir execv untuk menghentikan proses jika selesai. kemudian memanggil fungsi ```zipFolder()``` untuk membuat Lopyu_Stevany.zip
 ### Kendala
 Tidak Ada
 
