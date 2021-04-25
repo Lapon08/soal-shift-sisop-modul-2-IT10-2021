@@ -20,49 +20,51 @@
     + [Penyelesaian](#penyelesaian-3)
   * [soal 1.e](#soal-1e)
     + [Deskripsi](#deskripsi-5)
+    + [Penyelesaian](#penyelesaian-4)
   * [soal 1.f](#soal-1f)
     + [Deskripsi](#deskripsi-6)
-    + [Penyelesaian](#penyelesaian-4)
+    + [Penyelesaian](#penyelesaian-5)
   * [Kendala](#kendala)
   * [Screenshot](#screenshot)
 - [Soal 2](#soal-2)
     + [Deskripsi](#deskripsi-7)
   * [soal 2.a](#soal-2a)
     + [Deskripsi](#deskripsi-8)
-    + [Penyelesaian](#penyelesaian-5)
+    + [Penyelesaian](#penyelesaian-6)
   * [soal 2.b](#soal-2b)
     + [Deskripsi](#deskripsi-9)
-    + [Penyelesaian](#penyelesaian-6)
+    + [Penyelesaian](#penyelesaian-7)
   * [soal 2.c](#soal-2c)
     + [Deskripsi](#deskripsi-10)
-    + [Penyelesaian](#penyelesaian-7)
+    + [Penyelesaian](#penyelesaian-8)
   * [soal 2.d](#soal-2d)
     + [Deskripsi](#deskripsi-11)
-    + [Penyelesaian](#penyelesaian-8)
+    + [Penyelesaian](#penyelesaian-9)
   * [soal 2.e](#soal-2e)
     + [Deskripsi](#deskripsi-12)
-    + [Penyelesaian](#penyelesaian-9)
+    + [Penyelesaian](#penyelesaian-10)
   * [Kendala](#kendala-1)
   * [Screenshot](#screenshot-1)
 - [Soal 3](#soal-3)
     + [Deskripsi](#deskripsi-13)
   * [soal 3.a](#soal-3a)
     + [Deskripsi](#deskripsi-14)
-    + [Penyelesaian](#penyelesaian-10)
+    + [Penyelesaian](#penyelesaian-11)
   * [soal 3.b](#soal-3b)
     + [Deskripsi](#deskripsi-15)
-    + [Penyelesaian](#penyelesaian-11)
+    + [Penyelesaian](#penyelesaian-12)
   * [soal 3.c](#soal-3c)
     + [Deskripsi](#deskripsi-16)
-    + [Penyelesaian](#penyelesaian-12)
+    + [Penyelesaian](#penyelesaian-13)
   * [soal 3.d](#soal-3d)
     + [Deskripsi](#deskripsi-17)
-    + [Penyelesaian](#penyelesaian-13)
+    + [Penyelesaian](#penyelesaian-14)
   * [soal 3.e](#soal-3e)
     + [Deskripsi](#deskripsi-18)
-    + [Penyelesaian](#penyelesaian-14)
+    + [Penyelesaian](#penyelesaian-15)
   * [Kendala](#kendala-2)
   * [Screenshot](#screenshot-2)
+
 # Soal 1
 Source Code : [soal1.c](soal1/soal1.c)
 ### Deskripsi
@@ -281,10 +283,10 @@ Dalam Permasalahan ini, terdapat else if yang terakhir yaitu untuk menghapus fol
         execv("/bin/rm",argv10);
         } 
 ```
-### Kendala
+## Kendala
 Tidak Ada
 
-### Screenshot
+## Screenshot
 Ketika dijalankan tetapi waktu masih belum diatur ke 2021-04-09 16:22:00
 ![](screenshot/soal1.png)
 
@@ -660,10 +662,10 @@ Disini menggunakan ```FILE *pFile;``` untuk membuat filenya. Lalu menggunakan ``
     return 0;
 }
 ```
-### Kendala
+## Kendala
 Tidak Ada
 
-### Screenshot
+## Screenshot
 Sebelum Program dijalankan
 ![](screenshot/soal2_before.png)
 
@@ -868,10 +870,10 @@ Sedangkan apabila program utama dijalankan dengan argument -x maka file killer.s
     fprintf(fileKiller, contents, getpid());
   }
 ```
-### Kendala
+## Kendala
 Tidak Ada
 
-### Screenshot
+## Screenshot
 Menjalankan program dengan menambahkan argumen -z yang mengakibatkan seluruh proses langsung berhenti ketika killer.sh dijalankan
 ![](screenshot/soal3_-z.png)
 
