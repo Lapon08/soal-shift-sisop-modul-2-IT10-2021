@@ -874,12 +874,12 @@ Sedangkan apabila program utama dijalankan dengan argument -x maka file killer.s
 Tidak Ada
 
 ### Screenshot
-Menjalankan program dengan menambahkan argumen -z yang mengakibatkan seluruh proses langsung berhenti
+Menjalankan program dengan menambahkan argumen -z yang mengakibatkan seluruh proses langsung berhenti ketika killer.sh dijalankan
 ![](screenshot/soal3_-z.png)
 
 ![](screenshot/soal3_-z_2.png)
 
-Menjalankan program dengan menambahkan argumen -x yang akan kill proses parent dan membiarkan child menjalankan proses sampai selesai
+Menjalankan program dengan menambahkan argumen -x yang akan kill proses parent dan membiarkan child menjalankan proses sampai selesai ketika killer.sh dijalankan
 
 ![](screenshot/soal3_-x.png)
 
