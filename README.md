@@ -6,7 +6,6 @@
 ## Table Of Content
 - [Soal 1](#soal-1)
     + [Deskripsi](#deskripsi)
-    + [Penyelesaian](#penyelesaian)
   * [soal 1.a](#soal-1a)
     + [Deskripsi](#deskripsi-1)
     + [Penyelesaian](#penyelesaian-1)
